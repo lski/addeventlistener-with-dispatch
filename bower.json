@@ -1,0 +1,30 @@
+{
+  "name": "addeventlistener-with-dispatch",
+  "description": "addEventListener, removeEventListener, dispatchEvent and DOMContentLoaded polyfill for IE8",
+  "main": "./dist/addeventlistener-with-dispatch.js",
+  "authors": [
+    "Lee Cooper <lee.cooper@lski.uk>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "events",
+    "cross",
+    "browser",
+    "addeventlistener",
+    "removeEventListener",
+    "dispatchEvent",
+    "ie8"
+  ],
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+	"gulpfile.js",
+	"npm-debug.log"
+  ],
+  "version": "1.0.0"
+}

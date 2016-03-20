@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Jasmine Spec Runner</title>
+
+    <link rel="shortcut icon" type="image/png" href="/node_modules/jasmine-core/images/jasmine_favicon.png">
+    <link rel="stylesheet" href="/node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+    <style>
+        .parent {
+            display: none;
+        }
+    </style>
+
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
+    <script src="/src/addeventlistener-with-dispatch.js"></script>
+    <script>
+        window.domContentLoadedPretest = false;
+        document.addEventListener('DOMContentLoaded', function(evt) {
+            
+           var el = document.getElementById('test-s9');
+           window.domContentLoadedPretest = !!el;
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="parent">
+
+        <img id="test-s2" src="" />
+
+        <img id="test-s3" src="" />
+
+        <img id="test-s4" src="" />
+
+        <button id="test-s5" type="button">Trigger Event</button>
+
+        <button id="test-s6" type="button">Trigger Custom Event</button>
+
+        <div id="test-s7" class="parent">
+            <button type="button">Bubble</button>
+        </div>
+        
+        <div id="test-s8"></div>
+        
+        <div id="test-s9"></div>
+
+        <button id="test-s10" type="button">Native Catch</button>
+
+    </div>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>
