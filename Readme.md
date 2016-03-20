@@ -13,9 +13,9 @@ It works passively, just include the script before anything that requires addEve
 The package is available from bower, npm or download the minified file and add it directly.
 
 ```
-npm install github:lski/addeventlistener-with-dispatch
+npm install addeventlistener-with-dispatch
 
-bower install https://github.com/lski/addeventlistener-with-dispatch.git
+bower install addeventlistener-with-dispatch
 ```
 
 ## Build From Source
