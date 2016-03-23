@@ -3,7 +3,8 @@ const gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     insert = require('gulp-insert'),
     json = require('gulp-json-editor'),
-    settings = require('./package.json');
+    settings = require('./package.json'),
+	versionHeader = ["/*! ", settings.description, " - ", settings.version, " */\n"].join("");
 
 gulp.task('clean', clean);
 gulp.task('minify', ['clean'], minifyJs);
@@ -18,15 +19,6 @@ function minifyJs() {
     
     return gulp.src('./src/*.js')
         .pipe(uglify())
-        .pipe(insert.prepend(["/*! ", settings.description, " - ", settings.version, " */\n"].join("")))
+        .pipe(insert.prepend(versionHeader))
         .pipe(gulp.dest('./dist/'));
-}
-
-function updateBowerSettings() {
-    
-    gulp.src('bower.json')
-        .pipe(json({
-            version: settings.version
-        }))
-        .pipe(gulp.dest('.'));
 }
