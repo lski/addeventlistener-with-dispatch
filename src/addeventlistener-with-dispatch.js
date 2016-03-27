@@ -116,27 +116,23 @@
 				// So we wrap the already wrapper listener to check it is the complete state before calling the wrapped listener
 				var documentCompleteWrapper = function documentCompleteWrapper(e) {
 
-					// Using interactive, although there is an issue in IE9/10 that means interactive fires too early, this isnt an issue in IE8
-					// As we are not shimming above 8 because this is an addEventListener polyfill thats already present in IE9 we dont need to worry
-					if (document.readyState === "interactive") {
+					// Check if the the change was to say the document is in a useable state
+					if (/loaded|complete/.test(document.readyState)) {
 						wrapper(e);
 					}
 				};
 
 				// Test at the latest possible moment its loaded
-				if (!/interactive|complete|loaded/.test(document.readyState)) {
+				if (!/loaded|complete/.test(document.readyState)) {
 					document.attachEvent("onreadystatechange", documentCompleteWrapper);
 					eventListeners.push({ object: _thisElement, type: type, listener: listener, wrapper: documentCompleteWrapper });
 				}
-
 			}
 			else {
 				_thisElement.attachEvent("on" + type, wrapper);
 				eventListeners.push({ object: _thisElement, type: type, listener: listener, wrapper: wrapper });
 			}
 		};
-
-
 
 		var removeEventListener = function removeEventListener(type, listener /*, useCapture (will be ignored) */) {
 

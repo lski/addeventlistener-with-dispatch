@@ -1,6 +1,6 @@
 {
   "name": "addeventlistener-with-dispatch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "addEventListener, removeEventListener, dispatchEvent and DOMContentLoaded polyfill for IE8",
   "main": "./dist/addeventlistener-with-dispatch.js",
   "scripts": {
