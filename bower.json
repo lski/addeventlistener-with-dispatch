@@ -15,7 +15,7 @@
     "dispatchEvent",
     "ie8"
   ],
-  "moduleType": [],
+  "moduleType": ["globals", "amd", "node"],
   "homepage": "",
   "ignore": [
     "**/.*",

@@ -3,7 +3,7 @@
     /**
      * States whether log outputs to the console or not
      */
-    var outputResults = true;
+    var outputLog = true;
     var imageToLoad = "assests/test.png";
     var altImgToLoad = "assests/test-2.png";
 
@@ -230,18 +230,19 @@
     }
 
     function _log() {
-
-        if (outputResults && typeof console !== "undefined") {
-            var i = -1,
-                l = arguments.length,
-                args = [],
-                fn = 'console.log(args)';
-            while (++i < l) {
-                args.push('args[' + i + ']');
-            };
-            fn = new Function('args', fn.replace(/args/, args.join(',')));
-            fn(arguments);
-        }
+		
+		if (outputLog) {
+			
+			try {
+				console.log.apply(console, arguments);	
+			} 
+			catch (e) {
+				// IE8 Hack
+				var i = arguments.length, args = [];
+				while (--i >= -1 && args.push('args[' + i + ']'));
+				new Function('args', 'console.log(' + args.join(',') + ')')(arguments);
+			}
+		}
     };
 
 })(this);
