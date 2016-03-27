@@ -1,162 +1,162 @@
 (function() {
-    
-    "use strict;"
 
-    if (!Event.prototype.preventDefault) {
+	"use strict;"
 
-        Event.prototype.preventDefault = function() {
-            this.returnValue = false;
-        };
-    }
+	if (!Event.prototype.preventDefault) {
 
-    if (!Event.prototype.stopPropagation) {
+		Event.prototype.preventDefault = function() {
+			this.returnValue = false;
+		};
+	}
 
-        Event.prototype.stopPropagation = function() {
-            this.cancelBubble = true;
-        };
-    }
+	if (!Event.prototype.stopPropagation) {
 
-    if (!Element.prototype.addEventListener) {
+		Event.prototype.stopPropagation = function() {
+			this.cancelBubble = true;
+		};
+	}
 
-        var eventListeners = [];
+	if (!Element.prototype.addEventListener) {
 
-        Element.prototype.addEventListener = HTMLDocument.prototype.addEventListener = Window.prototype.addEventListener = addEventListener;
-        Element.prototype.removeEventListener = HTMLDocument.prototype.removeEventListener = Window.prototype.removeEventListener = removeEventListener;
-        Element.prototype.dispatchEvent = HTMLDocument.prototype.dispatchEvent = Window.prototype.dispatchEvent = dispatchEvent;
+		var eventListeners = [];
 
-        // list of real events
-        var htmlEvents = {
-            //<body> and <frameset> Events
-            onload: 1,
-            onunload: 1,
-            //Form Events
-            onblur: 1,
-            onchange: 1,
-            onfocus: 1,
-            onreset: 1,
-            onselect: 1,
-            onsubmit: 1,
-            //Image Events
-            onabort: 1,
-            //Keyboard Events
-            onkeydown: 1,
-            onkeypress: 1,
-            onkeyup: 1,
-            //Mouse Events
-            onclick: 1,
-            ondblclick: 1,
-            onmousedown: 1,
-            onmousemove: 1,
-            onmouseout: 1,
-            onmouseover: 1,
-            onmouseup: 1
-        };
+		Element.prototype.addEventListener = HTMLDocument.prototype.addEventListener = Window.prototype.addEventListener = addEventListener;
+		Element.prototype.removeEventListener = HTMLDocument.prototype.removeEventListener = Window.prototype.removeEventListener = removeEventListener;
+		Element.prototype.dispatchEvent = HTMLDocument.prototype.dispatchEvent = Window.prototype.dispatchEvent = dispatchEvent;
 
-        function dispatchEvent(event) {
+		// list of real events
+		var htmlEvents = {
+			//<body> and <frameset> Events
+			onload: 1,
+			onunload: 1,
+			//Form Events
+			onblur: 1,
+			onchange: 1,
+			onfocus: 1,
+			onreset: 1,
+			onselect: 1,
+			onsubmit: 1,
+			//Image Events
+			onabort: 1,
+			//Keyboard Events
+			onkeydown: 1,
+			onkeypress: 1,
+			onkeyup: 1,
+			//Mouse Events
+			onclick: 1,
+			ondblclick: 1,
+			onmousedown: 1,
+			onmousemove: 1,
+			onmouseout: 1,
+			onmouseover: 1,
+			onmouseup: 1
+		};
 
-            var self = this,
-                eventName = event.eventName || event.type;
+		var dispatchEvent = function dispatchEvent(event) {
 
-            // fireEvent can trigger only real event (e.g. 'click')
-            if (self.fireEvent && htmlEvents['on' + eventName]) {
-                
-                self.fireEvent('on' + eventName, event);
-            }
-            else if (self[eventName] && typeof self[eventName] === 'function') {
-                
-                self[eventName](event);
-            }
-            else if (self['on' + eventName] && typeof self['on' + eventName] === 'function') {
-                
-                self['on' + eventName](event);
-            }
-            else {
-                
-                // hasnt been found to be linked elsewhere, so a custom event, simply fire the handler for that event if one found
-                for (var i = 0, n = eventListeners.length; i < n; i++) {
+			var self = this,
+				eventName = event.type;
 
-                    var e = eventListeners[i];
+			// fireEvent can trigger only real event (e.g. 'click')
+			if (self.fireEvent && htmlEvents['on' + eventName]) {
 
-                    if (this === e.object && e.type === event.eventName) {
+				self.fireEvent('on' + eventName, event);
+			}
+			else if (self[eventName] && typeof self[eventName] === 'function') {
 
-                        // Call the handler
-                        e.wrapper.call(self, event);
-                        break;
-                    }
-                }
+				self[eventName](event);
+			}
+			else if (self['on' + eventName] && typeof self['on' + eventName] === 'function') {
 
-            }
+				self['on' + eventName](event);
+			}
+			else {
 
-        };
+				// hasnt been found to be linked elsewhere, so a custom event, simply fire the handler for that event if one found
+				for (var i = 0, n = eventListeners.length; i < n; i++) {
 
-        function addEventListener(type, listener /*, useCapture (will be ignored) */) {
+					var e = eventListeners[i];
 
-            var _thisElement = this;
+					if (this === e.object && e.type === eventName) {
 
-            // To normalise the event object slightly before firing the listener wrap it to perform the cleanup then call the originally listener
-            var wrapper = function(e) {
+						// Call the handler
+						e.wrapper.call(self, event);
+						break;
+					}
+				}
 
-                // Normalize the event
-                e.target = e.srcElement;
-                e.currentTarget = _thisElement;
+			}
 
-                // Just in case there is a handleEvent function attached to
-                if (listener.handleEvent) {
-                    listener.handleEvent(e);
-                }
-                else {
-                    listener.call(_thisElement, e);
-                }
-            };
+		};
 
-            // Polyfill DOMContentLoaded
-            if (type == "DOMContentLoaded") {
+		var addEventListener = function addEventListener(type, listener /*, useCapture (will be ignored) */) {
 
-                // To polyfill we watch the onreadystatechange event, however this fires on multiple page states
-                // So we wrap the already wrapper listener to check it is the complete state before calling the wrapped listener
-                var documentCompleteWrapper = function documentCompleteWrapper(e) {
+			var _thisElement = this;
 
-                    // Using interactive, although there is an issue in IE9/10 that means interactive fires too early, this isnt an issue in IE8
-                    // As we are not shimming above 8 because this is an addEventListener polyfill thats already present in IE9 we dont need to worry
-                    if (document.readyState === "interactive") {
-                        wrapper(e);
-                    }
-                };
-                
-                // Test at the latest possible moment its loaded
-                if(!/interactive|complete|loaded/.test(document.readyState)){
-                    document.attachEvent("onreadystatechange", documentCompleteWrapper);
-                    eventListeners.push({ object: _thisElement, type: type, listener: listener, wrapper: documentCompleteWrapper });
-                }
-                
-            }
-            else {
-                _thisElement.attachEvent("on" + type, wrapper);
-                eventListeners.push({ object: _thisElement, type: type, listener: listener, wrapper: wrapper });
-            }
-        };
+			// To normalise the event object slightly before firing the listener wrap it to perform the cleanup then call the originally listener
+			var wrapper = function(e) {
 
-        
+				// Normalize the event
+				e.target = e.srcElement;
+				e.currentTarget = _thisElement;
 
-        function removeEventListener(type, listener /*, useCapture (will be ignored) */) {
+				// Just in case there is a handleEvent function attached to
+				if (listener.handleEvent) {
+					listener.handleEvent(e);
+				}
+				else {
+					listener.call(_thisElement, e);
+				}
+			};
 
-            var counter = 0;
+			// Polyfill DOMContentLoaded
+			if (type == "DOMContentLoaded") {
 
-            while (counter < eventListeners.length) {
+				// To polyfill we watch the onreadystatechange event, however this fires on multiple page states
+				// So we wrap the already wrapper listener to check it is the complete state before calling the wrapped listener
+				var documentCompleteWrapper = function documentCompleteWrapper(e) {
 
-                var eventListener = eventListeners[counter];
+					// Using interactive, although there is an issue in IE9/10 that means interactive fires too early, this isnt an issue in IE8
+					// As we are not shimming above 8 because this is an addEventListener polyfill thats already present in IE9 we dont need to worry
+					if (document.readyState === "interactive") {
+						wrapper(e);
+					}
+				};
 
-                if (eventListener.object == this && eventListener.type == type && eventListener.listener == listener) {
+				// Test at the latest possible moment its loaded
+				if (!/interactive|complete|loaded/.test(document.readyState)) {
+					document.attachEvent("onreadystatechange", documentCompleteWrapper);
+					eventListeners.push({ object: _thisElement, type: type, listener: listener, wrapper: documentCompleteWrapper });
+				}
 
-                    // As we used a proxy event for DOMContentLoaded we check to see if we need to remove the listener from that instead 
-                    var eventNameToDetach = (type === "DOMContentLoaded" ? "onreadystatechange" : "on" + type);
-                    this.detachEvent(eventNameToDetach, eventListener.wrapper);
+			}
+			else {
+				_thisElement.attachEvent("on" + type, wrapper);
+				eventListeners.push({ object: _thisElement, type: type, listener: listener, wrapper: wrapper });
+			}
+		};
 
-                    break;
-                }
-                ++counter;
-            }
-        };
-    }
+
+
+		var removeEventListener = function removeEventListener(type, listener /*, useCapture (will be ignored) */) {
+
+			var counter = 0;
+
+			while (counter < eventListeners.length) {
+
+				var eventListener = eventListeners[counter];
+
+				if (eventListener.object == this && eventListener.type == type && eventListener.listener == listener) {
+
+					// As we used a proxy event for DOMContentLoaded we check to see if we need to remove the listener from that instead 
+					var eventNameToDetach = (type === "DOMContentLoaded" ? "onreadystatechange" : "on" + type);
+					this.detachEvent(eventNameToDetach, eventListener.wrapper);
+
+					break;
+				}
+				++counter;
+			}
+		};
+	}
 
 })();
